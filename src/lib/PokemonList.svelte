@@ -1,54 +1,38 @@
 <script lang="ts">
-    import { createQuery } from "@tanstack/svelte-query";
-
-    type PokedexType = {
-        count: number;
-        next: string;
-        previous?: string;
-        results: Result[];
-    };
-
-    type Result = {
-        name: string;
-        url: string;
-    };
-
-	type CostomError = {
-		message: string
-	}
-
-	let Lists: Result[] = []
-
-    // const fetchPokemonList = ;
-    const query  = createQuery({
-        queryKey: ["Pokemon"],
-        queryFn: async (): Promise<PokedexType> => {
-        const respond = await fetch("https://pokeapi.co/api/v2/pokedex");
-        return respond.json();
-    },
-        refetchInterval: 1000
-    });
+	import { createQuery } from "@tanstack/svelte-query";
+	import Card from "./Card.svelte";
+	import type { PokedexType, Result } from "../types/pokedex";
 
 	
-    
 
-    query.subscribe(({ data, error, isLoading }) => {
-        if (!data) {
-            return 'Något hände'
-        }
-        console.log(isLoading);
-		Lists = data.results
-    });
+	let pokedexLists: Result[] = [];
+
+	const pokedex = createQuery({
+		queryKey: ["Pokemon"],
+		queryFn: async (): Promise<PokedexType> => {
+			const respond = await fetch("https://pokeapi.co/api/v2/pokedex");
+			return respond.json();
+		},
+	});
+
+	pokedex.subscribe(({ data }) => {
+		if (!data) {
+			return "Något hände";
+		}
+		pokedexLists = data.results;
+	});
 </script>
-
-<h1>Pokemon list works</h1>
-
-{#each Lists as list }
-	<p>{list.name}</p>
-{/each}
-
+<section>
+	{#each pokedexLists as list}
+			<!-- <a href={list.url}>{list.name}</a> -->
+			<Card Pokemon={list} />
+	{/each}
+</section>
 <style>
-    h1 {
-        font-size: 3rem;
-    }
+	section {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		gap: 45px;
+		margin-inline: 130px;
+	}
 </style>
