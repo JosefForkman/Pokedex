@@ -9,7 +9,7 @@
 			default: string;
 			shiny: string;
 		};
-		types: [type: {}];
+		types: string[];
 		hp: number;
 		attack: number;
 		defense: number;
@@ -20,11 +20,13 @@
 
 	let result: Pokemon;
 
+	let pokemonId = 133;
+
 	const getPokemon = createQuery({
-		queryKey: ["singlePokemon"],
+		queryKey: ["singlePokemon", pokemonId],
 		queryFn: async () => {
 			const response = await fetch(
-				"https://pokeapi.co/api/v2/pokemon/133"
+				`https://pokeapi.co/api/v2/pokemon/${pokemonId}`
 			);
 			return await response.json();
 		},
@@ -57,57 +59,58 @@
 		console.log(data);
 		// result = data;
 	});
-	// console.log(getPokemon);
-
-	// console.log(result);
-
-	// console.log(result);
-
-	/* type Result = {
-		id: number;
-	}; */
-
-	/* const query = createQuery({
-		queryKey: ["pokemon"],
-		queryFn: async (): Promise<Result> => {
-			const response = await fetch(
-				"https://pokeapi.co/api/v2/pokemon/133"
-			);
-			return response.json();
-		},
-		// refetchInterval: 1000,
-	}); */
-
-	/* query.subscribe(({ data, error, isLoading }) => {
-		if (!data) {
-			return error;
-		}
-		console.log(isLoading);
-		console.log(data);
-		// chosenPokemon = data;
-	}); */
-
-	// console.log(chosenPokemon[0].name);
 </script>
 
 {#if $getPokemon.isLoading}
 	<p>Loading...</p>
 {:else if $getPokemon.isSuccess}
-	<p>{result.name}</p>
-	<p>{result.id}</p>
-	<p>{result.hp}</p>
-	<p>{result.attack}</p>
-	<p>{result.defense}</p>
-	<p>{result.specialAttack}</p>
-	<p>{result.specialDefense}</p>
-	<p>{result.speed}</p>
+	<section />
+	<div>
+		<p>Name:</p>
+		<p>{result.name}</p>
+	</div>
+
+	<div>
+		<p>Pokedex entry:</p>
+		<p>{result.id}</p>
+	</div>
+
+	<div>
+		<p>Base hp:</p>
+		<p>{result.hp}</p>
+	</div>
+
+	<div>
+		<p>Base attack:</p>
+		<p>{result.attack}</p>
+	</div>
+
+	<div>
+		<p>Base defense:</p>
+		<p>{result.defense}</p>
+	</div>
+
+	<div>
+		<p>Base special attack:</p>
+		<p>{result.specialAttack}</p>
+	</div>
+
+	<div>
+		<p>Base special defense:</p>
+		<p>{result.specialDefense}</p>
+	</div>
+
+	<div>
+		<p>Base speed:</p>
+		<p>{result.speed}</p>
+	</div>
 
 	<img src={result.sprites.default} alt="" />
 	<img src={result.sprites.shiny} alt="" />
 
-	<!-- {#each result.types as type}
+	{#each result.types as type}
 		<p>{type.type.name}</p>
-	{/each} -->
+	{/each}
 {/if}
 
 <style>
