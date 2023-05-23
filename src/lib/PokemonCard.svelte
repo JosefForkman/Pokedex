@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { createQuery } from "@tanstack/svelte-query";
-	// import { useState } from "./hooks.ts";
+	import { each } from "svelte/internal";
 
 	type Pokemon = {
 		id: number;
 		name: string;
-		sprite: string;
-		shinySprite: string;
-		types: string[];
+		sprites: {
+			default: string;
+			shiny: string;
+		};
+		types: [type: {}];
 		hp: number;
 		attack: number;
 		defense: number;
@@ -15,6 +17,8 @@
 		specialDefense: number;
 		speed: number;
 	};
+
+	let result: Pokemon;
 
 	const getPokemon = createQuery({
 		queryKey: ["singlePokemon"],
@@ -26,13 +30,34 @@
 		},
 	});
 
-	// console.log(getPokemon);
-	let result;
+	getPokemon.subscribe(({ data, error, isLoading }) => {
+		if (!data) {
+			return;
+		} else if (data) {
+			result = {
+				id: data.id,
+				name: data.name,
+				sprites: {
+					default: data.sprites.front_default,
+					shiny: data.sprites.front_shiny,
+				},
+				types: data.types,
+				hp: data.stats[0].base_stat,
+				attack: data.stats[1].base_stat,
+				defense: data.stats[2].base_stat,
+				specialAttack: data.stats[3].base_stat,
+				specialDefense: data.stats[4].base_stat,
+				speed: data.stats[5].base_stat,
+			};
 
-	getPokemon.subscribe((value) => {
-		result = value;
-		console.log(result);
+			console.log(result);
+		}
+
+		// console.log(isLoading);
+		console.log(data);
+		// result = data;
 	});
+	// console.log(getPokemon);
 
 	// console.log(result);
 
@@ -41,8 +66,6 @@
 	/* type Result = {
 		id: number;
 	}; */
-
-	// let chosenPokemon: Result[] = [];
 
 	/* const query = createQuery({
 		queryKey: ["pokemon"],
@@ -67,59 +90,25 @@
 	// console.log(chosenPokemon[0].name);
 </script>
 
-{#await getPokemon}
-	<p>...waiting</p>
-{:then data}
-	<p>{data}</p>
-{:catch error}
-	<p>An error occurred!</p>
-{/await}
+{#if $getPokemon.isLoading}
+	<p>Loading...</p>
+{:else if $getPokemon.isSuccess}
+	<p>{result.name}</p>
+	<p>{result.id}</p>
+	<p>{result.hp}</p>
+	<p>{result.attack}</p>
+	<p>{result.defense}</p>
+	<p>{result.specialAttack}</p>
+	<p>{result.specialDefense}</p>
+	<p>{result.speed}</p>
 
-<!-- <h1>{chosenPokemon[0].name}</h1> -->
+	<img src={result.sprites.default} alt="" />
+	<img src={result.sprites.shiny} alt="" />
 
-<!-- <div>
-	<p>{chosenPokemon[0].stats[0].stat.name}:</p>
-	<p>{chosenPokemon[0].stats[0].base_stat}</p>
-</div> -->
-
-<!-- <div>
-	<p>{chosenPokemon[0].stats[1].stat.name}:</p>
-	<p>{chosenPokemon[0].stats[1].base_stat}</p>
-</div> -->
-
-<!-- <div>
-	<p>{chosenPokemon[0].stats[2].stat.name}:</p>
-	<p>{chosenPokemon[0].stats[2].base_stat}</p>
-</div> -->
-
-<!-- <div>
-	<p>{chosenPokemon[0].stats[3].stat.name}:</p>
-	<p>{chosenPokemon[0].stats[3].base_stat}</p>
-</div> -->
-
-<!-- <div>
-	<p>{chosenPokemon[0].stats[4].stat.name}:</p>
-	<p>{chosenPokemon[0].stats[4].base_stat}</p>
-</div> -->
-
-<!-- <div>
-	<p>{chosenPokemon[0].stats[5].stat.name}:</p>
-	<p>{chosenPokemon[0].stats[5].base_stat}</p>
-</div> -->
-
-<!-- <div>
-	<p>Pokedex entry:</p>
-	<p>{chosenPokemon[0].id}</p>
-</div> -->
-
-<!-- {#each chosenPokemon[0].types as type}
-	<p>{type.name}</p>
-{/each} -->
-
-<!-- <img src={chosenPokemon[0].sprites.front_default} alt="" /> -->
-
-<!-- <img src={chosenPokemon[0].sprites.front_shiny} alt="" /> -->
-<!-- <img src={chosenPokemon[0].sprites.front_shiny} alt="" /> -->
+	<!-- {#each result.types as type}
+		<p>{type.type.name}</p>
+	{/each} -->
+{/if}
 
 <style>
 </style>
