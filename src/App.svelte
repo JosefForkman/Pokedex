@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
 	import PokemonList from "./lib/PokemonList.svelte";
+	import PokemonCard from "./lib/PokemonCard.svelte";
 	const queryClient = new QueryClient();
 </script>
 
 <QueryClientProvider client={queryClient}>
 	<main>
 		<h1>Pokedex, woooo!!!!</h1>
+		<PokemonCard />
 		<PokemonList />
 	</main>
 </QueryClientProvider>
