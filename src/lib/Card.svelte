@@ -1,14 +1,22 @@
 <script lang="ts">
-	import type { Result } from "../types/pokedex";
+	import type { PokemonEntry } from "../types/pokedex";
+	
+	export let Pokemon:PokemonEntry
 
-	export let Pokemon:Result
+	
+	function selectPokemon() {
+		console.log(Pokemon);
+	}
 </script>
 	<div>
-		<a href="{Pokemon.url}">{Pokemon.name}</a>
+		<b>{Pokemon.pokemon_species.name}</b>
+		<p>Pokedex entry {Pokemon.entry_number}</p>
+		<button on:click={selectPokemon}>shows</button>
 	</div>
 <style>
 	div {
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		height: 150px;

@@ -1,16 +1,14 @@
 <script lang="ts">
 	import { createQuery } from "@tanstack/svelte-query";
 	import Card from "./Card.svelte";
-	import type { PokedexType, Result } from "../types/pokedex";
+	import type { PokedexSpecifikType, PokemonEntry } from "../types/pokedex";
 
-	
-
-	let pokedexLists: Result[] = [];
+	let pokemonLists: PokemonEntry[] = [];
 
 	const pokedex = createQuery({
 		queryKey: ["Pokemon"],
-		queryFn: async (): Promise<PokedexType> => {
-			const respond = await fetch("https://pokeapi.co/api/v2/pokedex");
+		queryFn: async (): Promise<PokedexSpecifikType> => {
+			const respond = await fetch("https://pokeapi.co/api/v2/pokedex/6");
 			return respond.json();
 		},
 	});
@@ -19,15 +17,18 @@
 		if (!data) {
 			return "Något hände";
 		}
-		pokedexLists = data.results;
+		console.log(data);
+		
+		pokemonLists = data.pokemon_entries;
 	});
 </script>
+
 <section>
-	{#each pokedexLists as list}
-			<!-- <a href={list.url}>{list.name}</a> -->
-			<Card Pokemon={list} />
+	{#each pokemonLists as pokemonList}
+		<Card Pokemon={pokemonList} />
 	{/each}
 </section>
+
 <style>
 	section {
 		display: grid;
