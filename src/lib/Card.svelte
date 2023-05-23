@@ -2,10 +2,12 @@
 	import type { PokemonEntry } from "../types/pokedex";
 	
 	export let Pokemon:PokemonEntry
+	export let currentPokemon;
 
 	
 	function selectPokemon() {
 		console.log(Pokemon);
+		currentPokemon = Pokemon.pokemon_species.name
 	}
 </script>
 	<div>
