@@ -1,114 +1,73 @@
 <script lang="ts">
 	import { createQuery } from "@tanstack/svelte-query";
-	import { each } from "svelte/internal";
+	import type { Pokemon } from "../types/pokemon";
 
-	type Pokemon = {
-		id: number;
-		name: string;
-		sprites: {
-			default: string;
-			shiny: string;
-		};
-		types: string[];
-		hp: number;
-		attack: number;
-		defense: number;
-		specialAttack: number;
-		specialDefense: number;
-		speed: number;
-	};
+	type PokemonData = Pick<
+		Pokemon,
+		"id" | "name" | "sprites" | "types" | "stats"
+	>;
 
-	let result: Pokemon;
+	let chosenPokemon: PokemonData;
 
-	let pokemonId = 133;
+	let pokemonName = "umbreon";
 
 	const getPokemon = createQuery({
-		queryKey: ["singlePokemon", pokemonId],
+		queryKey: ["singlePokemon", pokemonName],
 		queryFn: async () => {
 			const response = await fetch(
-				`https://pokeapi.co/api/v2/pokemon/${pokemonId}`
+				`https://pokeapi.co/api/v2/pokemon/${pokemonName}`
 			);
 			return await response.json();
 		},
 	});
 
-	getPokemon.subscribe(({ data, error, isLoading }) => {
+	getPokemon.subscribe(({ data }) => {
 		if (!data) {
 			return;
 		} else if (data) {
-			result = {
+			chosenPokemon = {
 				id: data.id,
-				name: data.name,
-				sprites: {
-					default: data.sprites.front_default,
-					shiny: data.sprites.front_shiny,
-				},
+				name: data.name.charAt(0).toUpperCase() + data.name.slice(1),
+				sprites: data.sprites,
 				types: data.types,
-				hp: data.stats[0].base_stat,
-				attack: data.stats[1].base_stat,
-				defense: data.stats[2].base_stat,
-				specialAttack: data.stats[3].base_stat,
-				specialDefense: data.stats[4].base_stat,
-				speed: data.stats[5].base_stat,
+				stats: data.stats,
 			};
-
-			console.log(result);
+			// console.log(chosenPokemon);
 		}
 
 		// console.log(isLoading);
-		console.log(data);
-		// result = data;
+		// console.log(data);
 	});
 </script>
 
 {#if $getPokemon.isLoading}
 	<p>Loading...</p>
 {:else if $getPokemon.isSuccess}
-	<section />
-	<div>
-		<p>Name:</p>
-		<p>{result.name}</p>
-	</div>
+	<section>
+		<p>Name: {chosenPokemon.name}</p>
+		<p>Pokedex entry: {chosenPokemon.id}</p>
+		<div>
+			<p>Base Stats</p>
+			<ul>
+				<li>Hp: {chosenPokemon.stats[0].base_stat}</li>
+				<li>Attack: {chosenPokemon.stats[1].base_stat}</li>
+				<li>Defense: {chosenPokemon.stats[2].base_stat}</li>
+				<li>Special attack: {chosenPokemon.stats[3].base_stat}</li>
+				<li>Special defense: {chosenPokemon.stats[4].base_stat}</li>
+				<li>Speed: {chosenPokemon.stats[5].base_stat}</li>
+			</ul>
+		</div>
+	</section>
 
-	<div>
-		<p>Pokedex entry:</p>
-		<p>{result.id}</p>
-	</div>
+	<img src={chosenPokemon.sprites.front_default} alt="" />
+	<img src={chosenPokemon.sprites.front_shiny} alt="" />
+	<!-- <img
+		src={chosenPokemon.sprites.versions?.["generation-v"]["black-white"]
+			.animated?.front_default}
+		alt=""
+	/> -->
 
-	<div>
-		<p>Base hp:</p>
-		<p>{result.hp}</p>
-	</div>
-
-	<div>
-		<p>Base attack:</p>
-		<p>{result.attack}</p>
-	</div>
-
-	<div>
-		<p>Base defense:</p>
-		<p>{result.defense}</p>
-	</div>
-
-	<div>
-		<p>Base special attack:</p>
-		<p>{result.specialAttack}</p>
-	</div>
-
-	<div>
-		<p>Base special defense:</p>
-		<p>{result.specialDefense}</p>
-	</div>
-
-	<div>
-		<p>Base speed:</p>
-		<p>{result.speed}</p>
-	</div>
-
-	<img src={result.sprites.default} alt="" />
-	<img src={result.sprites.shiny} alt="" />
-
-	{#each result.types as type}
+	{#each chosenPokemon.types as type}
 		<p>{type.type.name}</p>
 	{/each}
 {/if}
