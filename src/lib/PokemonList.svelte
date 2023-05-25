@@ -2,7 +2,9 @@
 	import { createQuery } from "@tanstack/svelte-query";
 	import Card from "./Card.svelte";
 	import type { PokedexSpecifikType, PokemonEntry } from "../types/pokedex";
-
+	
+	export let currentPokemon = "snälla ändra"
+	
 	let pokemonLists: PokemonEntry[] = [];
 
 	const pokedex = createQuery({
@@ -18,14 +20,18 @@
 			return "Något hände";
 		}
 		console.log(data);
-		
+
 		pokemonLists = data.pokemon_entries;
 	});
 </script>
 
 <section>
+	{currentPokemon != "snälla ändra" ? currentPokemon + " 😍" : "snälla ändra" }
 	{#each pokemonLists as pokemonList}
-		<Card Pokemon={pokemonList} />
+		<Card
+			bind:currentPokemon
+			Pokemon={pokemonList}
+		/>
 	{/each}
 </section>
 
