@@ -13,12 +13,18 @@
 		Defense,
 		SpecialAttack,
 		SpecialDefense,
-		Speed
+		Speed,
 	}
 
 	let chosenPokemon: PokemonData;
 
 	let pokemonName = "umbreon";
+
+	const changePokemon = () => {
+		console.log(pokemonName);
+		pokemonName = "gyarados";
+		console.log(pokemonName);
+	};
 
 	const getPokemon = createQuery({
 		queryKey: ["singlePokemon", pokemonName],
@@ -30,9 +36,11 @@
 		},
 	});
 
-	getPokemon.subscribe(({ data }) => {
+	getPokemon.subscribe(({ data, error }) => {
 		if (!data) {
 			return;
+		} else if (error) {
+			return error;
 		} else if (data) {
 			chosenPokemon = {
 				id: data.id,
@@ -41,12 +49,7 @@
 				types: data.types,
 				stats: data.stats,
 			};
-			// console.log(chosenPokemon);
 		}
-		chosenPokemon = data;
-
-		// console.log(isLoading);
-		// console.log(data);
 	});
 </script>
 
@@ -60,14 +63,30 @@
 			<p>Base Stats</p>
 			<ul>
 				<li>Hp: {chosenPokemon.stats[statsIndex.Hp].base_stat}</li>
-				<li>Attack: {chosenPokemon.stats[statsIndex.Attack].base_stat}</li>
-				<li>Defense: {chosenPokemon.stats[statsIndex.Defense].base_stat}</li>
-				<li>Special attack: {chosenPokemon.stats[statsIndex.SpecialAttack].base_stat}</li>
-				<li>Special defense: {chosenPokemon.stats[statsIndex.SpecialDefense].base_stat}</li>
-				<li>Speed: {chosenPokemon.stats[statsIndex.Speed].base_stat}</li>
+				<li>
+					Attack: {chosenPokemon.stats[statsIndex.Attack].base_stat}
+				</li>
+				<li>
+					Defense: {chosenPokemon.stats[statsIndex.Defense].base_stat}
+				</li>
+				<li>
+					Special attack: {chosenPokemon.stats[
+						statsIndex.SpecialAttack
+					].base_stat}
+				</li>
+				<li>
+					Special defense: {chosenPokemon.stats[
+						statsIndex.SpecialDefense
+					].base_stat}
+				</li>
+				<li>
+					Speed: {chosenPokemon.stats[statsIndex.Speed].base_stat}
+				</li>
 			</ul>
 		</div>
 	</section>
+
+	<button on:click={changePokemon}>click me</button>
 
 	<img src={chosenPokemon.sprites.front_default} alt="" />
 	<img src={chosenPokemon.sprites.front_shiny} alt="" />
@@ -81,5 +100,6 @@
 		<p>{type.type.name}</p>
 	{/each}
 {/if}
+
 <style>
 </style>
