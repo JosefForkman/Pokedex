@@ -183,7 +183,7 @@ export interface GenerationViii {
 export interface Stat {
 	base_stat: number
 	effort: number
-	stat: nameUrl
+	stat: nameUrl[]
 }
 
 export interface Type {

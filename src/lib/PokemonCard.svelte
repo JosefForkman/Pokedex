@@ -7,13 +7,22 @@
 		"id" | "name" | "sprites" | "types" | "stats"
 	>;
 
+	enum statsIndex {
+		Hp,
+		Attack,
+		Defense,
+		SpecialAttack,
+		SpecialDefense,
+		Speed
+	}
+
 	let chosenPokemon: PokemonData;
 
 	let pokemonName = "umbreon";
 
 	const getPokemon = createQuery({
 		queryKey: ["singlePokemon", pokemonName],
-		queryFn: async () => {
+		queryFn: async (): Promise<PokemonData> => {
 			const response = await fetch(
 				`https://pokeapi.co/api/v2/pokemon/${pokemonName}`
 			);
@@ -34,6 +43,7 @@
 			};
 			// console.log(chosenPokemon);
 		}
+		chosenPokemon = data;
 
 		// console.log(isLoading);
 		// console.log(data);
@@ -49,12 +59,12 @@
 		<div>
 			<p>Base Stats</p>
 			<ul>
-				<li>Hp: {chosenPokemon.stats[0].base_stat}</li>
-				<li>Attack: {chosenPokemon.stats[1].base_stat}</li>
-				<li>Defense: {chosenPokemon.stats[2].base_stat}</li>
-				<li>Special attack: {chosenPokemon.stats[3].base_stat}</li>
-				<li>Special defense: {chosenPokemon.stats[4].base_stat}</li>
-				<li>Speed: {chosenPokemon.stats[5].base_stat}</li>
+				<li>Hp: {chosenPokemon.stats[statsIndex.Hp].base_stat}</li>
+				<li>Attack: {chosenPokemon.stats[statsIndex.Attack].base_stat}</li>
+				<li>Defense: {chosenPokemon.stats[statsIndex.Defense].base_stat}</li>
+				<li>Special attack: {chosenPokemon.stats[statsIndex.SpecialAttack].base_stat}</li>
+				<li>Special defense: {chosenPokemon.stats[statsIndex.SpecialDefense].base_stat}</li>
+				<li>Speed: {chosenPokemon.stats[statsIndex.Speed].base_stat}</li>
 			</ul>
 		</div>
 	</section>
@@ -71,6 +81,5 @@
 		<p>{type.type.name}</p>
 	{/each}
 {/if}
-
 <style>
 </style>

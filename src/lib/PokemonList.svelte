@@ -26,7 +26,6 @@
 </script>
 
 <section>
-	{currentPokemon != "snälla ändra" ? currentPokemon + " 😍" : "snälla ändra" }
 	{#each pokemonLists as pokemonList}
 		<Card
 			bind:currentPokemon
