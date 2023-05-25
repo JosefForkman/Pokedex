@@ -1,23 +1,13 @@
 <script lang="ts">
 	import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
-	import PokemonList from "./lib/PokemonList.svelte";
-	import PokemonCard from "./lib/PokemonCard.svelte";
+	import Home from "./lib/Pages/Home.svelte";
 	const queryClient = new QueryClient();
-
-	let currentPokemon = "";
 </script>
 
 <QueryClientProvider client={queryClient}>
 	<main>
-		<h1>Pokedex, woooo!!!! {currentPokemon}</h1>
-		<PokemonCard />
-		<PokemonList bind:currentPokemon/>
+		<Home />
 	</main>
 </QueryClientProvider>
 
-<style>
-	h1 {
-		font-size: 3rem;
-		color: red;
-	}
-</style>
+<style></style>
