@@ -19,6 +19,7 @@
     "vite": "^4.3.2"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^4.29.7"
+    "@tanstack/svelte-query": "^4.29.7",
+    "graphql-request": "^6.1.0"
   }
 }

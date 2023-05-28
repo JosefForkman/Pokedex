@@ -1,29 +1,79 @@
 <script lang="ts">
+    import { request, gql } from "graphql-request";
 	import { createQuery } from "@tanstack/svelte-query";
-	import type { PokedexSpecifikType, PokemonEntry } from "../../types/pokedex";
 	import Card from "../Card.svelte";
 	import PokemonCard from "../PokemonCard.svelte";
+	import type { PokemonType, PokemonV2Pokemon } from "../../types/PokemonGrid";
+	import { onDestroy } from "svelte";
 
 	let currentPokemon:string
 	
-	let pokemonLists: PokemonEntry[] = [];
+	let pokemonLists: PokemonV2Pokemon[] = [];
 
-	const pokedex = createQuery({
-		queryKey: ["Pokemon"],
-		queryFn: async (): Promise<PokedexSpecifikType> => {
-			const respond = await fetch("https://pokeapi.co/api/v2/pokedex/6");
-			return respond.json();
-		},
-	});
+	
+	const graphqlFetch = async (version = "gold"): Promise<PokemonType> => {
+        const url = "https://beta.pokeapi.co/graphql/v1beta";
+        const document = gql`
+            query {
+                pokemon_v2_pokemon(
+                    limit: 20
+                    where: {
+                        pokemon_v2_encounters: {
+                            pokemon_v2_version: { name: { _eq: ${version} } }
+                        }
+                    }
+                ) {
+                    name
+                    id
+                    pokemon_v2_pokemonsprites {
+                        sprites
+                    }
+                }
+            }
+        `;
 
-	pokedex.subscribe(({ data }) => {
-		if (!data) {
-			return "Något hände";
-		}
-		console.log(data);
+        let res = await request<PokemonType>(url, document);
 
-		pokemonLists = data.pokemon_entries;
-	});
+        res.pokemon_v2_pokemon.forEach((Pokemon) => {
+            let sprite = Pokemon.pokemon_v2_pokemonsprites[0].sprites;
+
+            /* Check if sprite is not stringify JSON */
+            if (typeof sprite == "string") {
+                
+                /* Fix sprite url */
+                sprite = sprite.replaceAll("/media", "");
+
+                /* Parse sprit to JSON */
+                const parsedData = JSON.parse(sprite);
+
+                sprite = parsedData;
+            }
+            
+            /* Update sprite object on respond */
+            Pokemon.pokemon_v2_pokemonsprites[0].sprites = sprite;
+        });
+
+        return res;
+    };
+
+	const query = createQuery<PokemonType, Error>({
+        queryKey: ["Pokemon"],
+        queryFn: () => graphqlFetch(),
+    });
+
+    const Unsubscriber = query.subscribe(({ data }) => {
+        /* Make shore data is not empty  */
+        if (!data) {
+            return "Något hände";
+        }
+
+        pokemonLists = data.pokemon_v2_pokemon;
+    });
+
+	/* Remove fetch query after use */
+	onDestroy(() => {
+		Unsubscriber()
+	})
 </script>
 
 <PokemonCard />
@@ -41,7 +91,7 @@
 <style>
 	section {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 		gap: 45px;
 		margin-inline: 130px;
 	}
