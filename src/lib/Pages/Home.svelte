@@ -11,12 +11,12 @@
 	let pokemonLists: PokemonV2Pokemon[] = [];
 
 	
-	const graphqlFetch = async (version = "gold"): Promise<PokemonType> => {
+	const graphqlFetch = async (version = "diamond"): Promise<PokemonType> => {
         const url = "https://beta.pokeapi.co/graphql/v1beta";
         const document = gql`
             query {
                 pokemon_v2_pokemon(
-                    limit: 20
+                    limit: 200
                     where: {
                         pokemon_v2_encounters: {
                             pokemon_v2_version: { name: { _eq: ${version} } }

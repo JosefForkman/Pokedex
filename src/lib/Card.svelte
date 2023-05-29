@@ -13,7 +13,7 @@
 <div>
 	{#if typeof Pokemon.pokemon_v2_pokemonsprites[0].sprites != "string"}
 	<img
-		src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/${Pokemon.pokemon_v2_pokemonsprites[0].sprites.front_default}`}
+		src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/${Pokemon.pokemon_v2_pokemonsprites[0].sprites.versions?.["generation-v"]["black-white"].animated?.front_default}`}
 		alt="image on {Pokemon.name}"
 	/>
 	{/if}
