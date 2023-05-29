@@ -43,15 +43,6 @@
 			return data;
 		},
 	});
-
-	const changePokemon = () => {
-		console.log(pokemonName);
-
-		// pokemonName = "gyarados";
-		pokemonName = "pikachu";
-
-		console.log(pokemonName);
-	};
 </script>
 
 {#if $query.isLoading}
@@ -86,8 +77,6 @@
 			</ul>
 		</div>
 	</section>
-
-	<button on:click={changePokemon}>click me</button>
 
 	<!-- <img src={chosenPokemon.sprites.front_default} alt="" /> -->
 	<img
