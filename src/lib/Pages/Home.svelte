@@ -3,11 +3,7 @@
 	import { createQuery } from "@tanstack/svelte-query";
 	import Card from "../Card.svelte";
 	import PokemonCard from "../PokemonCard.svelte";
-	import type {
-		PokemonType,
-		PokemonV2Pokemon,
-	} from "../../types/PokemonGrid";
-	import { onDestroy } from "svelte";
+	import type { PokemonType } from "../../types/PokemonGrid";
 
 	let currentPokemon: string;
 	let pokemonVersion = "red";
@@ -59,25 +55,12 @@
 	$: query = createQuery<PokemonType, Error>({
 		queryKey: [pokemonVersion],
 		queryFn: () => graphqlFetch(pokemonVersion),
-		enabled: true
+		enabled: true,
 	});
-
-	// const Unsubscriber = query.subscribe(({ data }) => {
-	//     /* Make shore data is not empty  */
-	//     if (!data) {
-	//         return "Något hände";
-	//     }
-
-	//     pokemonLists = data.pokemon_v2_pokemon;
-	// });
-
-	/* Remove fetch query after use */
-	// onDestroy(() => {
-	// 	Unsubscriber()
-	// })
 </script>
 
 <PokemonCard />
+
 <select bind:value={pokemonVersion}>
 	<option value="red">red</option>
 	<option value="blue">blue</option>
@@ -92,7 +75,7 @@
 	<option value="pearl">pearl</option>
 	<option value="platinum">platinum</option>
 </select>
-{$query.data?.pokemon_v2_pokemon[0].name}
+
 <section>
 	{#if $query.data}
 		{#each $query.data.pokemon_v2_pokemon as pokemonList}
