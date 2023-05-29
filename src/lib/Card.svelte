@@ -7,6 +7,7 @@
 	function selectPokemon() {
 		console.log(Pokemon);
 		currentPokemon = Pokemon.name;
+		window.scrollTo(0, 0);
 	}
 
 	const sprites = Pokemon.pokemon_v2_pokemonsprites[0].sprites;

@@ -54,8 +54,7 @@
 
 	$: query = createQuery<PokemonType, Error>({
 		queryKey: [pokemonVersion],
-		queryFn: () => graphqlFetch(pokemonVersion),
-		enabled: true,
+		queryFn: () => graphqlFetch(pokemonVersion)
 	});
 </script>
 
@@ -75,8 +74,6 @@
 	<option value="pearl">pearl</option>
 	<option value="platinum">platinum</option>
 </select>
-
-{currentPokemon}
 
 <section>
 	{#if $query.data}
