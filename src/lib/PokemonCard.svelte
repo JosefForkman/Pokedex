@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createQuery } from "@tanstack/svelte-query";
 	import type { Pokemon } from "../types/pokemon";
+	import currentPokemon from "./Card.svelte";
 
 	type PokemonData = Pick<
 		Pokemon,
@@ -20,42 +21,43 @@
 
 	let pokemonName = "umbreon";
 
-	const changePokemon = () => {
-		console.log(pokemonName);
-		pokemonName = "gyarados";
-		console.log(pokemonName);
-	};
-
-	const getPokemon = createQuery({
+	$: query = createQuery({
 		queryKey: ["singlePokemon", pokemonName],
-		queryFn: async (): Promise<PokemonData> => {
+		queryFn: async () => {
 			const response = await fetch(
 				`https://pokeapi.co/api/v2/pokemon/${pokemonName}`
 			);
-			return await response.json();
+
+			const data = await response.json();
+
+			if (data) {
+				chosenPokemon = {
+					id: data.id,
+					name:
+						data.name.charAt(0).toUpperCase() + data.name.slice(1),
+					sprites: data.sprites,
+					types: data.types,
+					stats: data.stats,
+				};
+			}
+
+			return data;
 		},
 	});
 
-	getPokemon.subscribe(({ data, error }) => {
-		if (!data) {
-			return;
-		} else if (error) {
-			return error;
-		} else if (data) {
-			chosenPokemon = {
-				id: data.id,
-				name: data.name.charAt(0).toUpperCase() + data.name.slice(1),
-				sprites: data.sprites,
-				types: data.types,
-				stats: data.stats,
-			};
-		}
-	});
+	const changePokemon = () => {
+		console.log(pokemonName);
+
+		// pokemonName = "gyarados";
+		pokemonName = "pikachu";
+
+		console.log(pokemonName);
+	};
 </script>
 
-{#if $getPokemon.isLoading}
+{#if $query.isLoading}
 	<p>Loading...</p>
-{:else if $getPokemon.isSuccess}
+{:else if $query.isSuccess}
 	<section>
 		<p>Name: {chosenPokemon.name}</p>
 		<p>Pokedex entry: {chosenPokemon.id}</p>
@@ -88,13 +90,18 @@
 
 	<button on:click={changePokemon}>click me</button>
 
-	<img src={chosenPokemon.sprites.front_default} alt="" />
-	<img src={chosenPokemon.sprites.front_shiny} alt="" />
-	<!-- <img
+	<!-- <img src={chosenPokemon.sprites.front_default} alt="" /> -->
+	<img
 		src={chosenPokemon.sprites.versions?.["generation-v"]["black-white"]
 			.animated?.front_default}
 		alt=""
-	/> -->
+	/>
+	<!-- <img src={chosenPokemon.sprites.front_shiny} alt="" /> -->
+	<img
+		src={chosenPokemon.sprites.versions?.["generation-v"]["black-white"]
+			.animated?.front_shiny}
+		alt=""
+	/>
 
 	{#each chosenPokemon.types as type}
 		<p>{type.type.name}</p>
