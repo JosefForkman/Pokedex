@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { createQuery } from "@tanstack/svelte-query";
 	import type { Pokemon } from "../types/pokemon";
-	import currentPokemon from "./Card.svelte";
 
 	type PokemonData = Pick<
 		Pokemon,
@@ -19,7 +18,7 @@
 
 	let chosenPokemon: PokemonData;
 
-	let pokemonName = "umbreon";
+	export let pokemonName = "umbreon";
 
 	$: query = createQuery({
 		queryKey: ["singlePokemon", pokemonName],

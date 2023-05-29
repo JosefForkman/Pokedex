@@ -8,14 +8,23 @@
 		console.log(Pokemon);
 		currentPokemon = Pokemon.name;
 	}
+
+	const sprites = Pokemon.pokemon_v2_pokemonsprites[0].sprites;
 </script>
 
 <div>
-	{#if typeof Pokemon.pokemon_v2_pokemonsprites[0].sprites != "string"}
-	<img
-		src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/${Pokemon.pokemon_v2_pokemonsprites[0].sprites.versions?.["generation-v"]["black-white"].animated?.front_default}`}
-		alt="image on {Pokemon.name}"
-	/>
+	{#if typeof sprites != "string"}
+		{#if sprites.versions?.["generation-v"]["black-white"].animated?.front_default}
+			<img
+				src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/${sprites.versions?.["generation-v"]["black-white"].animated?.front_default}`}
+				alt="image on {Pokemon.name}"
+			/>
+		{:else}
+			<img
+				src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/${sprites.front_default}`}
+				alt="image on {Pokemon.name}"
+			/>
+		{/if}
 	{/if}
 	<b>{Pokemon.name}</b>
 	<p>Pokedex entry {Pokemon.id}</p>

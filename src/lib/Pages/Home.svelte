@@ -59,7 +59,7 @@
 	});
 </script>
 
-<PokemonCard />
+<PokemonCard pokemonName={currentPokemon} />
 
 <select bind:value={pokemonVersion}>
 	<option value="red">red</option>
@@ -75,6 +75,8 @@
 	<option value="pearl">pearl</option>
 	<option value="platinum">platinum</option>
 </select>
+
+{currentPokemon}
 
 <section>
 	{#if $query.data}
