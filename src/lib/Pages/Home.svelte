@@ -1,19 +1,20 @@
 <script lang="ts">
-    import { request, gql } from "graphql-request";
+	import { request, gql } from "graphql-request";
 	import { createQuery } from "@tanstack/svelte-query";
 	import Card from "../Card.svelte";
 	import PokemonCard from "../PokemonCard.svelte";
-	import type { PokemonType, PokemonV2Pokemon } from "../../types/PokemonGrid";
+	import type {
+		PokemonType,
+		PokemonV2Pokemon,
+	} from "../../types/PokemonGrid";
 	import { onDestroy } from "svelte";
 
-	let currentPokemon:string
-	
-	let pokemonLists: PokemonV2Pokemon[] = [];
+	let currentPokemon: string;
+	let pokemonVersion = "red";
 
-	
-	const graphqlFetch = async (version = "diamond"): Promise<PokemonType> => {
-        const url = "https://beta.pokeapi.co/graphql/v1beta";
-        const document = gql`
+	const graphqlFetch = async (version = "gold"): Promise<PokemonType> => {
+		const url = "https://beta.pokeapi.co/graphql/v1beta";
+		const document = gql`
             query {
                 pokemon_v2_pokemon(
                     limit: 200
@@ -32,61 +33,73 @@
             }
         `;
 
-        let res = await request<PokemonType>(url, document);
+		let res = await request<PokemonType>(url, document);
 
-        res.pokemon_v2_pokemon.forEach((Pokemon) => {
-            let sprite = Pokemon.pokemon_v2_pokemonsprites[0].sprites;
+		res.pokemon_v2_pokemon.forEach((Pokemon) => {
+			let sprite = Pokemon.pokemon_v2_pokemonsprites[0].sprites;
 
-            /* Check if sprite is not stringify JSON */
-            if (typeof sprite == "string") {
-                
-                /* Fix sprite url */
-                sprite = sprite.replaceAll("/media", "");
+			/* Check if sprite is not stringify JSON */
+			if (typeof sprite == "string") {
+				/* Fix sprite url */
+				sprite = sprite.replaceAll("/media", "");
 
-                /* Parse sprit to JSON */
-                const parsedData = JSON.parse(sprite);
+				/* Parse sprit to JSON */
+				const parsedData = JSON.parse(sprite);
 
-                sprite = parsedData;
-            }
-            
-            /* Update sprite object on respond */
-            Pokemon.pokemon_v2_pokemonsprites[0].sprites = sprite;
-        });
+				sprite = parsedData;
+			}
 
-        return res;
-    };
+			/* Update sprite object on respond */
+			Pokemon.pokemon_v2_pokemonsprites[0].sprites = sprite;
+		});
 
-	const query = createQuery<PokemonType, Error>({
-        queryKey: ["Pokemon"],
-        queryFn: () => graphqlFetch(),
-    });
+		return res;
+	};
 
-    const Unsubscriber = query.subscribe(({ data }) => {
-        /* Make shore data is not empty  */
-        if (!data) {
-            return "Något hände";
-        }
+	$: query = createQuery<PokemonType, Error>({
+		queryKey: [pokemonVersion],
+		queryFn: () => graphqlFetch(pokemonVersion),
+		enabled: true
+	});
 
-        pokemonLists = data.pokemon_v2_pokemon;
-    });
+	// const Unsubscriber = query.subscribe(({ data }) => {
+	//     /* Make shore data is not empty  */
+	//     if (!data) {
+	//         return "Något hände";
+	//     }
+
+	//     pokemonLists = data.pokemon_v2_pokemon;
+	// });
 
 	/* Remove fetch query after use */
-	onDestroy(() => {
-		Unsubscriber()
-	})
+	// onDestroy(() => {
+	// 	Unsubscriber()
+	// })
 </script>
 
 <PokemonCard />
-
+<select bind:value={pokemonVersion}>
+	<option value="red">red</option>
+	<option value="blue">blue</option>
+	<option value="yellow">yellow</option>
+	<option value="firered">firered</option>
+	<option value="leafgreen">leafgreen</option>
+	<option value="heartgold">heartgold</option>
+	<option value="soulsilver">soulsilver</option>
+	<option value="x">x</option>
+	<option value="y">y</option>
+	<option value="diamond">diamond</option>
+	<option value="pearl">pearl</option>
+	<option value="platinum">platinum</option>
+</select>
+{$query.data?.pokemon_v2_pokemon[0].name}
 <section>
-	{#each pokemonLists as pokemonList}
-		<Card
-			bind:currentPokemon
-			Pokemon={pokemonList}
-		/>
-	{/each}
+	{#if $query.data}
+		{#each $query.data.pokemon_v2_pokemon as pokemonList}
+			<Card bind:currentPokemon Pokemon={pokemonList} />
+		{/each}
+	{/if}
 </section>
-
 
 <style>
 	section {
