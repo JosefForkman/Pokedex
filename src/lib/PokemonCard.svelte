@@ -46,7 +46,7 @@
 </script>
 
 {#if $query.isLoading}
-	<p>Loading...</p>
+	<h1>Loading...</h1>
 {:else if $query.isSuccess}
 	<section>
 		<p>Name: {chosenPokemon.name}</p>
@@ -78,18 +78,25 @@
 		</div>
 	</section>
 
-	<!-- <img src={chosenPokemon.sprites.front_default} alt="" /> -->
-	<img
-		src={chosenPokemon.sprites.versions?.["generation-v"]["black-white"]
-			.animated?.front_default}
-		alt=""
-	/>
-	<!-- <img src={chosenPokemon.sprites.front_shiny} alt="" /> -->
-	<img
-		src={chosenPokemon.sprites.versions?.["generation-v"]["black-white"]
-			.animated?.front_shiny}
-		alt=""
-	/>
+	{#if chosenPokemon.sprites.versions?.["generation-v"]["black-white"].animated?.front_default}
+		<img
+			src={chosenPokemon.sprites.versions?.["generation-v"]["black-white"]
+				.animated?.front_default}
+			alt=""
+		/>
+	{:else if chosenPokemon.sprites.front_default}
+		<img src={chosenPokemon.sprites.front_default} alt="" />
+	{/if}
+
+	{#if chosenPokemon.sprites.versions?.["generation-v"]["black-white"].animated?.front_shiny}
+		<img
+			src={chosenPokemon.sprites.versions?.["generation-v"]["black-white"]
+				.animated?.front_shiny}
+			alt=""
+		/>
+	{:else if chosenPokemon.sprites.front_shiny}
+		<img src={chosenPokemon.sprites.front_shiny} alt="" />
+	{/if}
 
 	{#each chosenPokemon.types as type}
 		<p>{type.type.name}</p>
@@ -97,4 +104,8 @@
 {/if}
 
 <style>
+	h1 {
+		font-size: 600;
+		color: red;
+	}
 </style>

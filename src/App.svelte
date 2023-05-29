@@ -6,8 +6,13 @@
 
 <QueryClientProvider client={queryClient}>
 	<main>
+		<h1>Pokemon Pokedex</h1>
 		<Home />
 	</main>
 </QueryClientProvider>
 
-<style></style>
+<style>
+	h1 {
+		font-family: "Press Start 2P", cursive;
+	}
+</style>
