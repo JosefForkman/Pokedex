@@ -60,6 +60,8 @@
 	$: query = createQuery<PokemonType, Error>({
 		queryKey: [pokemonVersion],
 		queryFn: () => graphqlFetch(pokemonVersion),
+		cacheTime: 100,
+		staleTime: 2000
 	});
 </script>
 

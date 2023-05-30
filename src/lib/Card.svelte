@@ -41,7 +41,7 @@
 		background-color: #d9d9d9;
 		color: #fff;
 		height: 200px;
-		border-radius: 0.25em;
+		border-radius: 0.5rem;
 	}
 
 	.type-fire {
@@ -58,6 +58,13 @@
 			#0d590d 100%
 		);
 	}
+	.type-bug {
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#34e934 0%,
+			#1ab21a 100%
+		);
+	}
 	.type-electric {
 		background: radial-gradient(
 			82.81% 82.81% at 50% 50%,
@@ -70,6 +77,20 @@
 			82.81% 82.81% at 50% 50%,
 			#0951d5 0%,
 			#000b39 100%
+		);
+	}
+	.type-dragon {
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#80abfa 0%,
+			#0535ff 100%
+		);
+	}
+	.type-flying {
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#e2ecfe 0%,
+			#6b88ff 100%
 		);
 	}
 	.type-strength {
@@ -100,7 +121,14 @@
 			#515151 100%
 		);
 	}
+	.type-normal {
+		background: radial-gradient(82.81% 82.81% at 50% 50%, #AFAFAF 0%, #636363 100%);
+	}
 	.type-psychic {
-		background: radial-gradient(82.81% 82.81% at 50% 50%, #9844BF 0%, #54266B 100%);
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#9844bf 0%,
+			#54266b 100%
+		);
 	}
 </style>
