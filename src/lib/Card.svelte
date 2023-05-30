@@ -29,19 +29,34 @@
 	{/if}
 	<b>{Pokemon.name}</b>
 	<p>Pokedex entry {Pokemon.id}</p>
-	<button on:click={selectPokemon}>shows</button>
+	<button on:click={selectPokemon}>show</button>
 </div>
 
 <style>
 	div {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+		display: grid;
+		grid-template-columns: 1fr 3fr;
+		grid-template-rows: repeat(2, auto) 1fr;
+		column-gap: 1rem;
 		background-color: #d9d9d9;
 		color: #fff;
-		height: 200px;
+		height: 160px;
+		padding: 1rem;
 		border-radius: 0.5rem;
+	}
+
+	img {
+		grid-row: span 3;
+		width: 100%;
+	}
+
+	button {
+		align-self: baseline;
+		color: #fff;
+		background-color: transparent;
+		padding-block: 0.5rem;
+		border: 2px solid #fff;
+		border-radius: 1vw;
 	}
 
 	.type-fire {
