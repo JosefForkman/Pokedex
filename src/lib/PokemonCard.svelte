@@ -18,16 +18,16 @@
 
 	let chosenPokemon: PokemonData;
 
-	export let pokemonName = "umbreon";
+	export let pokemonName: string = "umbreon";
 
 	$: query = createQuery({
 		queryKey: ["singlePokemon", pokemonName],
-		queryFn: async () => {
+		queryFn: async (): Promise<PokemonData> => {
 			const response = await fetch(
 				`https://pokeapi.co/api/v2/pokemon/${pokemonName}`
 			);
 
-			const data = await response.json();
+			const data: PokemonData = await response.json();
 
 			if (data) {
 				chosenPokemon = {
@@ -46,12 +46,56 @@
 </script>
 
 {#if $query.isLoading}
-	<h1>Loading...</h1>
+	<div class="loading-block">
+		<p>Loading...</p>
+	</div>
 {:else if $query.isSuccess}
-	<section>
-		<p>Name: {chosenPokemon.name}</p>
-		<p>Pokedex entry: {chosenPokemon.id}</p>
-		<div>
+	<section class="pokemon-card">
+		<div class="pokemon-sprite">
+			{#if chosenPokemon.sprites.versions?.["generation-v"]["black-white"].animated?.front_default}
+				<img
+					src={chosenPokemon.sprites.versions?.["generation-v"][
+						"black-white"
+					].animated?.front_default}
+					alt=""
+				/>
+			{:else if chosenPokemon.sprites.front_default}
+				<img src={chosenPokemon.sprites.front_default} alt="" />
+			{/if}
+		</div>
+
+		<div class="pokemon-info">
+			<div class="pokemon-info-text">
+				<h2>{chosenPokemon.name}</h2>
+
+				<p>Pokedex entry: {chosenPokemon.id}</p>
+
+				<div class="type-wrapper">
+					<p>Types:</p>
+					{#each chosenPokemon.types as type}
+						<p>
+							{type.type.name.charAt(0).toUpperCase() +
+								type.type.name.slice(1)}
+						</p>
+					{/each}
+				</div>
+			</div>
+
+			<div class="pokemon-sprite-shiny">
+				{#if chosenPokemon.sprites.versions?.["generation-v"]["black-white"].animated?.front_shiny}
+					<img
+						src={chosenPokemon.sprites.versions?.["generation-v"][
+							"black-white"
+						].animated?.front_shiny}
+						alt=""
+					/>
+				{:else if chosenPokemon.sprites.front_shiny}
+					<img src={chosenPokemon.sprites.front_shiny} alt="" />
+				{/if}
+			</div>
+		</div>
+
+		<div class="stats-wrapper">
 			<p>Base Stats</p>
 			<ul>
 				<li>Hp: {chosenPokemon.stats[statsIndex.Hp].base_stat}</li>
@@ -77,35 +121,112 @@
 			</ul>
 		</div>
 	</section>
-
-	{#if chosenPokemon.sprites.versions?.["generation-v"]["black-white"].animated?.front_default}
-		<img
-			src={chosenPokemon.sprites.versions?.["generation-v"]["black-white"]
-				.animated?.front_default}
-			alt=""
-		/>
-	{:else if chosenPokemon.sprites.front_default}
-		<img src={chosenPokemon.sprites.front_default} alt="" />
-	{/if}
-
-	{#if chosenPokemon.sprites.versions?.["generation-v"]["black-white"].animated?.front_shiny}
-		<img
-			src={chosenPokemon.sprites.versions?.["generation-v"]["black-white"]
-				.animated?.front_shiny}
-			alt=""
-		/>
-	{:else if chosenPokemon.sprites.front_shiny}
-		<img src={chosenPokemon.sprites.front_shiny} alt="" />
-	{/if}
-
-	{#each chosenPokemon.types as type}
-		<p>{type.type.name}</p>
-	{/each}
 {/if}
 
 <style>
-	h1 {
+	* {
+		margin: 0;
+		color: white;
+	}
+
+	.loading-block p {
 		font-size: 600;
 		color: red;
+	}
+
+	.pokemon-card {
+		margin: 0 20px 0 20px;
+		background-color: rgb(46, 22, 34);
+		border-radius: 16px;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		align-items: flex-start;
+		height: 300px;
+		padding: 50px 30px 20px 30px;
+	}
+
+	.pokemon-sprite {
+		width: 200px;
+		height: 200px;
+		background-color: rgb(202, 202, 202);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 16px;
+	}
+
+	.pokemon-sprite img {
+		width: 100px;
+		height: 100px;
+	}
+
+	.pokemon-sprite-shiny {
+		width: 130px;
+		height: 130px;
+		background-color: rgb(202, 202, 202);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 16px;
+	}
+
+	.pokemon-sprite-shiny img {
+		width: 70px;
+		height: 70px;
+	}
+
+	.type-wrapper {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+	}
+
+	.pokemon-info {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		gap: 30px;
+	}
+
+	.pokemon-info-text {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	h2 {
+		font-size: 2rem;
+		font-weight: 500;
+	}
+
+	.pokemon-info-text p {
+		font-size: 1.2rem;
+		font-weight: 400;
+	}
+
+	li {
+		list-style: none;
+		font-size: 1.2rem;
+		font-weight: 400;
+	}
+
+	ul {
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		height: 100%;
+	}
+
+	.stats-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.stats-wrapper p {
+		font-size: 1.2rem;
+		font-weight: 500;
 	}
 </style>
