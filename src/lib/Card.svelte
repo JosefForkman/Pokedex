@@ -93,11 +93,39 @@
 			#6b88ff 100%
 		);
 	}
+	.type-ice {
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#539ddf 0%,
+			#206aac 100%
+		);
+	}
 	.type-strength {
 		background: radial-gradient(
 			82.81% 82.81% at 50% 50%,
 			#c95717 0%,
 			#632b0b 100%
+		);
+	}
+	.type-ground {
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#e97c3f 0%,
+			#a54812 100%
+		);
+	}
+	.type-rock {
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#c9bc8a 0%,
+			#a18f4a 100%
+		);
+	}
+	.type-fighting {
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#ff4747 0%,
+			#8f0000 100%
 		);
 	}
 	.type-fairy {
@@ -122,13 +150,31 @@
 		);
 	}
 	.type-normal {
-		background: radial-gradient(82.81% 82.81% at 50% 50%, #AFAFAF 0%, #636363 100%);
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#afafaf 0%,
+			#636363 100%
+		);
 	}
 	.type-psychic {
 		background: radial-gradient(
 			82.81% 82.81% at 50% 50%,
 			#9844bf 0%,
 			#54266b 100%
+		);
+	}
+	.type-poison {
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#c291d9 0%,
+			#8e40b5 100%
+		);
+	}
+	.type-ghost {
+		background: radial-gradient(
+			82.81% 82.81% at 50% 50%,
+			#df72bb 0%,
+			#b3299c 100%
 		);
 	}
 </style>
