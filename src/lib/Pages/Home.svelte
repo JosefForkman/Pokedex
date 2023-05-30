@@ -11,23 +11,28 @@
 	const graphqlFetch = async (version = "gold"): Promise<PokemonType> => {
 		const url = "https://beta.pokeapi.co/graphql/v1beta";
 		const document = gql`
-            query {
-                pokemon_v2_pokemon(
-                    limit: 200
-                    where: {
-                        pokemon_v2_encounters: {
-                            pokemon_v2_version: { name: { _eq: ${version} } }
-                        }
-                    }
-                ) {
-                    name
-                    id
-                    pokemon_v2_pokemonsprites {
-                        sprites
-                    }
-                }
-            }
-        `;
+			query {
+				pokemon_v2_pokemon(
+					limit: 200
+					where: {
+						pokemon_v2_encounters: {
+							pokemon_v2_version: { name: { _eq: ${version} } }
+						}
+					}
+				) {
+					name
+					id
+					pokemon_v2_pokemonsprites {
+						sprites
+					}
+					types: pokemon_v2_pokemontypes {
+						type: pokemon_v2_type {
+							name
+						}
+					}
+				}
+			}
+		`;
 
 		let res = await request<PokemonType>(url, document);
 
@@ -54,7 +59,7 @@
 
 	$: query = createQuery<PokemonType, Error>({
 		queryKey: [pokemonVersion],
-		queryFn: () => graphqlFetch(pokemonVersion)
+		queryFn: () => graphqlFetch(pokemonVersion),
 	});
 </script>
 
