@@ -130,13 +130,23 @@
 	}
 
 	.loading-block p {
-		font-size: 600;
-		color: red;
+		font-size: 3rem;
+		color: white;
+	}
+
+	.loading-block {
+		margin: 0 48px 0 48px;
+		background-color: rgb(46, 22, 34);
+		border-radius: 16px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 300px;
 	}
 
 	.pokemon-card {
-		margin: 0 20px 0 20px;
-		background-color: rgb(46, 22, 34);
+		margin: 0 48px 0 48px;
+		background-color: #2a3d45;
 		border-radius: 16px;
 		display: flex;
 		flex-direction: row;
@@ -149,7 +159,7 @@
 	.pokemon-sprite {
 		width: 200px;
 		height: 200px;
-		background-color: rgb(202, 202, 202);
+		background-color: #ff6b6b;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -164,7 +174,7 @@
 	.pokemon-sprite-shiny {
 		width: 130px;
 		height: 130px;
-		background-color: rgb(202, 202, 202);
+		background-color: #4ecdc4;
 		display: flex;
 		justify-content: center;
 		align-items: center;
