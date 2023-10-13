@@ -9,7 +9,10 @@ Mitt första försök var att skriva så här
 ```svelte
 	const query  = createQuery<PokedexType>({
         queryKey: ["Pokemon"],
-        queryFn: () => fetchPokemonList(),
+        queryFn: async (): Promise<PokedexSpecifikType> => {
+			const respond = await fetch("https://pokeapi.co/api/v2/pokedex/6");
+			return respond.json();
+		},
         refetchInterval: 1000
     });
 ```
