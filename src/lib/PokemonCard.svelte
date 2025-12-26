@@ -4,39 +4,45 @@
 
 	type PokemonData = Pick<Pokemon, 'id' | 'name' | 'sprites' | 'types' | 'stats'>;
 
-	enum statsIndex {
-		Hp,
-		Attack,
-		Defense,
-		SpecialAttack,
-		SpecialDefense,
-		Speed
+	const statsIndex = {
+		Hp: 0,
+		Attack: 1,
+		Defense: 2,
+		SpecialAttack: 3,
+		SpecialDefense: 4,
+		Speed: 5
+	} as const;
+
+	let chosenPokemon: PokemonData | undefined = $state();
+
+	interface Props {
+		pokemonName?: string;
 	}
 
-	let chosenPokemon: PokemonData;
+	let { pokemonName = 'umbreon' }: Props = $props();
 
-	export let pokemonName: string = 'umbreon';
+	let query = $derived(
+		createQuery({
+			queryKey: ['singlePokemon', pokemonName],
+			queryFn: async (): Promise<PokemonData> => {
+				const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
 
-	$: query = createQuery({
-		queryKey: ['singlePokemon', pokemonName],
-		queryFn: async (): Promise<PokemonData> => {
-			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+				const data: PokemonData = await response.json();
 
-			const data: PokemonData = await response.json();
+				if (data) {
+					chosenPokemon = {
+						id: data.id,
+						name: data.name.charAt(0).toUpperCase() + data.name.slice(1),
+						sprites: data.sprites,
+						types: data.types,
+						stats: data.stats
+					};
+				}
 
-			if (data) {
-				chosenPokemon = {
-					id: data.id,
-					name: data.name.charAt(0).toUpperCase() + data.name.slice(1),
-					sprites: data.sprites,
-					types: data.types,
-					stats: data.stats
-				};
+				return data;
 			}
-
-			return data;
-		}
-	});
+		})
+	);
 </script>
 
 {#if $query.isLoading}
@@ -46,26 +52,26 @@
 {:else if $query.isSuccess}
 	<section class="pokemon-card">
 		<div class="pokemon-sprite">
-			{#if chosenPokemon.sprites.versions?.['generation-v']['black-white'].animated?.front_default}
+			{#if chosenPokemon?.sprites.versions?.['generation-v']['black-white'].animated?.front_default}
 				<img
 					src={chosenPokemon.sprites.versions?.['generation-v']['black-white'].animated
 						?.front_default}
 					alt=""
 				/>
-			{:else if chosenPokemon.sprites.front_default}
+			{:else if chosenPokemon?.sprites.front_default}
 				<img src={chosenPokemon.sprites.front_default} alt="" />
 			{/if}
 		</div>
 
 		<div class="pokemon-info">
 			<div class="pokemon-info-text">
-				<h2>{chosenPokemon.name}</h2>
+				<h2>{chosenPokemon?.name}</h2>
 
-				<p>Pokedex entry: {chosenPokemon.id}</p>
+				<p>Pokedex entry: {chosenPokemon?.id}</p>
 
 				<div class="type-wrapper">
 					<p>Types:</p>
-					{#each chosenPokemon.types as type, i (i)}
+					{#each chosenPokemon?.types as type, i (i)}
 						<p>
 							{type.type.name.charAt(0).toUpperCase() + type.type.name.slice(1)}
 						</p>
@@ -74,13 +80,13 @@
 			</div>
 
 			<div class="pokemon-sprite-shiny">
-				{#if chosenPokemon.sprites.versions?.['generation-v']['black-white'].animated?.front_shiny}
+				{#if chosenPokemon?.sprites.versions?.['generation-v']['black-white'].animated?.front_shiny}
 					<img
 						src={chosenPokemon.sprites.versions?.['generation-v']['black-white']
 							.animated?.front_shiny}
 						alt=""
 					/>
-				{:else if chosenPokemon.sprites.front_shiny}
+				{:else if chosenPokemon?.sprites.front_shiny}
 					<img src={chosenPokemon.sprites.front_shiny} alt="" />
 				{/if}
 			</div>
@@ -89,21 +95,21 @@
 		<div class="stats-wrapper">
 			<p>Base Stats</p>
 			<ul>
-				<li>Hp: {chosenPokemon.stats[statsIndex.Hp].base_stat}</li>
+				<li>Hp: {chosenPokemon?.stats[statsIndex.Hp].base_stat}</li>
 				<li>
-					Attack: {chosenPokemon.stats[statsIndex.Attack].base_stat}
+					Attack: {chosenPokemon?.stats[statsIndex.Attack].base_stat}
 				</li>
 				<li>
-					Defense: {chosenPokemon.stats[statsIndex.Defense].base_stat}
+					Defense: {chosenPokemon?.stats[statsIndex.Defense].base_stat}
 				</li>
 				<li>
-					Special attack: {chosenPokemon.stats[statsIndex.SpecialAttack].base_stat}
+					Special attack: {chosenPokemon?.stats[statsIndex.SpecialAttack].base_stat}
 				</li>
 				<li>
-					Special defense: {chosenPokemon.stats[statsIndex.SpecialDefense].base_stat}
+					Special defense: {chosenPokemon?.stats[statsIndex.SpecialDefense].base_stat}
 				</li>
 				<li>
-					Speed: {chosenPokemon.stats[statsIndex.Speed].base_stat}
+					Speed: {chosenPokemon?.stats[statsIndex.Speed].base_stat}
 				</li>
 			</ul>
 		</div>

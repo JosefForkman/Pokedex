@@ -5,8 +5,8 @@
 	import PokemonCard from '../PokemonCard.svelte';
 	import type { PokemonType } from '../../types/PokemonGrid';
 
-	let currentPokemon: string;
-	let pokemonVersion = 'red';
+	let currentPokemon: string | undefined = $state();
+	let pokemonVersion = $state('red');
 
 	const graphqlFetch = async (version = 'gold'): Promise<PokemonType> => {
 		const url = 'https://beta.pokeapi.co/graphql/v1beta';
@@ -57,12 +57,14 @@
 		return res;
 	};
 
-	$: query = createQuery<PokemonType, Error>({
-		queryKey: [pokemonVersion],
-		queryFn: () => graphqlFetch(pokemonVersion),
-		cacheTime: 100,
-		staleTime: 2000
-	});
+	let query = $derived(
+		createQuery<PokemonType, Error>({
+			queryKey: [pokemonVersion],
+			queryFn: () => graphqlFetch(pokemonVersion),
+			cacheTime: 100,
+			staleTime: 2000
+		})
+	);
 </script>
 
 <PokemonCard pokemonName={currentPokemon} />
