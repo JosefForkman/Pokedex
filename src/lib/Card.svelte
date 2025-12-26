@@ -1,8 +1,12 @@
 <script lang="ts">
 	import type { PokemonV2Pokemon } from '../types/PokemonGrid';
 
-	export let Pokemon: PokemonV2Pokemon;
-	export let currentPokemon;
+	interface Props {
+		Pokemon: PokemonV2Pokemon;
+		currentPokemon: string | undefined;
+	}
+
+	let { Pokemon, currentPokemon = $bindable() }: Props = $props();
 
 	function selectPokemon() {
 		console.log(Pokemon);
@@ -29,7 +33,7 @@
 	{/if}
 	<b>{Pokemon.name}</b>
 	<p>Pokedex entry {Pokemon.id}</p>
-	<button on:click={selectPokemon}>show</button>
+	<button onclick={selectPokemon}>show</button>
 </div>
 
 <style>
