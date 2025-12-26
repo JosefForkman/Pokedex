@@ -5,6 +5,7 @@ import ts from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
 export default [
+	{ ignores: ['dist/'] },
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs['flat/recommended'],
