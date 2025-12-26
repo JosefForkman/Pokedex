@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { request, gql } from "graphql-request";
-	import { createQuery } from "@tanstack/svelte-query";
-	import Card from "../Card.svelte";
-	import PokemonCard from "../PokemonCard.svelte";
-	import type { PokemonType } from "../../types/PokemonGrid";
+	import { request, gql } from 'graphql-request';
+	import { createQuery } from '@tanstack/svelte-query';
+	import Card from '../Card.svelte';
+	import PokemonCard from '../PokemonCard.svelte';
+	import type { PokemonType } from '../../types/PokemonGrid';
 
 	let currentPokemon: string;
-	let pokemonVersion = "red";
+	let pokemonVersion = 'red';
 
-	const graphqlFetch = async (version = "gold"): Promise<PokemonType> => {
-		const url = "https://beta.pokeapi.co/graphql/v1beta";
+	const graphqlFetch = async (version = 'gold'): Promise<PokemonType> => {
+		const url = 'https://beta.pokeapi.co/graphql/v1beta';
 		const document = gql`
 			query {
 				pokemon_v2_pokemon(
@@ -40,9 +40,9 @@
 			let sprite = Pokemon.pokemon_v2_pokemonsprites[0].sprites;
 
 			/* Check if sprite is not stringify JSON */
-			if (typeof sprite == "string") {
+			if (typeof sprite == 'string') {
 				/* Fix sprite url */
-				sprite = sprite.replaceAll("/media", "");
+				sprite = sprite.replaceAll('/media', '');
 
 				/* Parse sprit to JSON */
 				const parsedData = JSON.parse(sprite);
@@ -61,7 +61,7 @@
 		queryKey: [pokemonVersion],
 		queryFn: () => graphqlFetch(pokemonVersion),
 		cacheTime: 100,
-		staleTime: 2000,
+		staleTime: 2000
 	});
 </script>
 
