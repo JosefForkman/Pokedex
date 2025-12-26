@@ -65,7 +65,7 @@
 
 				<div class="type-wrapper">
 					<p>Types:</p>
-					{#each chosenPokemon.types as type}
+					{#each chosenPokemon.types as type, i (i)}
 						<p>
 							{type.type.name.charAt(0).toUpperCase() + type.type.name.slice(1)}
 						</p>

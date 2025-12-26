@@ -87,7 +87,7 @@
 
 <section>
 	{#if $query.data}
-		{#each $query.data.pokemon_v2_pokemon as pokemonList}
+		{#each $query.data.pokemon_v2_pokemon as pokemonList, i (i)}
 			<Card bind:currentPokemon Pokemon={pokemonList} />
 		{/each}
 	{/if}
