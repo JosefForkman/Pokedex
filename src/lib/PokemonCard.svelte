@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { createQuery } from "@tanstack/svelte-query";
-	import type { Pokemon } from "../types/pokemon";
+	import { createQuery } from '@tanstack/svelte-query';
+	import type { Pokemon } from '../types/pokemon';
 
-	type PokemonData = Pick<
-		Pokemon,
-		"id" | "name" | "sprites" | "types" | "stats"
-	>;
+	type PokemonData = Pick<Pokemon, 'id' | 'name' | 'sprites' | 'types' | 'stats'>;
 
 	enum statsIndex {
 		Hp,
@@ -13,35 +10,32 @@
 		Defense,
 		SpecialAttack,
 		SpecialDefense,
-		Speed,
+		Speed
 	}
 
 	let chosenPokemon: PokemonData;
 
-	export let pokemonName: string = "umbreon";
+	export let pokemonName: string = 'umbreon';
 
 	$: query = createQuery({
-		queryKey: ["singlePokemon", pokemonName],
+		queryKey: ['singlePokemon', pokemonName],
 		queryFn: async (): Promise<PokemonData> => {
-			const response = await fetch(
-				`https://pokeapi.co/api/v2/pokemon/${pokemonName}`
-			);
+			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
 
 			const data: PokemonData = await response.json();
 
 			if (data) {
 				chosenPokemon = {
 					id: data.id,
-					name:
-						data.name.charAt(0).toUpperCase() + data.name.slice(1),
+					name: data.name.charAt(0).toUpperCase() + data.name.slice(1),
 					sprites: data.sprites,
 					types: data.types,
-					stats: data.stats,
+					stats: data.stats
 				};
 			}
 
 			return data;
-		},
+		}
 	});
 </script>
 
@@ -52,11 +46,10 @@
 {:else if $query.isSuccess}
 	<section class="pokemon-card">
 		<div class="pokemon-sprite">
-			{#if chosenPokemon.sprites.versions?.["generation-v"]["black-white"].animated?.front_default}
+			{#if chosenPokemon.sprites.versions?.['generation-v']['black-white'].animated?.front_default}
 				<img
-					src={chosenPokemon.sprites.versions?.["generation-v"][
-						"black-white"
-					].animated?.front_default}
+					src={chosenPokemon.sprites.versions?.['generation-v']['black-white'].animated
+						?.front_default}
 					alt=""
 				/>
 			{:else if chosenPokemon.sprites.front_default}
@@ -72,21 +65,19 @@
 
 				<div class="type-wrapper">
 					<p>Types:</p>
-					{#each chosenPokemon.types as type}
+					{#each chosenPokemon.types as type, i (i)}
 						<p>
-							{type.type.name.charAt(0).toUpperCase() +
-								type.type.name.slice(1)}
+							{type.type.name.charAt(0).toUpperCase() + type.type.name.slice(1)}
 						</p>
 					{/each}
 				</div>
 			</div>
 
 			<div class="pokemon-sprite-shiny">
-				{#if chosenPokemon.sprites.versions?.["generation-v"]["black-white"].animated?.front_shiny}
+				{#if chosenPokemon.sprites.versions?.['generation-v']['black-white'].animated?.front_shiny}
 					<img
-						src={chosenPokemon.sprites.versions?.["generation-v"][
-							"black-white"
-						].animated?.front_shiny}
+						src={chosenPokemon.sprites.versions?.['generation-v']['black-white']
+							.animated?.front_shiny}
 						alt=""
 					/>
 				{:else if chosenPokemon.sprites.front_shiny}
@@ -106,14 +97,10 @@
 					Defense: {chosenPokemon.stats[statsIndex.Defense].base_stat}
 				</li>
 				<li>
-					Special attack: {chosenPokemon.stats[
-						statsIndex.SpecialAttack
-					].base_stat}
+					Special attack: {chosenPokemon.stats[statsIndex.SpecialAttack].base_stat}
 				</li>
 				<li>
-					Special defense: {chosenPokemon.stats[
-						statsIndex.SpecialDefense
-					].base_stat}
+					Special defense: {chosenPokemon.stats[statsIndex.SpecialDefense].base_stat}
 				</li>
 				<li>
 					Speed: {chosenPokemon.stats[statsIndex.Speed].base_stat}

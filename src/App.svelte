@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
-	import Home from "./lib/Pages/Home.svelte";
+	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import Home from './lib/Pages/Home.svelte';
 	const queryClient = new QueryClient();
 </script>
 
@@ -15,7 +15,7 @@
 
 <style>
 	h1 {
-		font-family: "Press Start 2P", cursive;
+		font-family: 'Press Start 2P', cursive;
 		font-size: 3rem;
 	}
 
@@ -26,6 +26,6 @@
 	}
 
 	* {
-		font-family: "Montserrat", sans-serif;
+		font-family: 'Montserrat', sans-serif;
 	}
 </style>
