@@ -26,9 +26,7 @@
 			cacheTime: 100,
 			staleTime: 2000
 		})
-	);
-	console.log($query);
-	
+	);	
 </script>
 
 <PokemonCard pokemonName={currentPokemon} />
