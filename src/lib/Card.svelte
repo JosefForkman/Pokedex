@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { PokemonV2Pokemon } from '../types/PokemonGrid';
+	import type { Pokemons } from './queries';
 
 	interface Props {
-		Pokemon: PokemonV2Pokemon;
+		Pokemon: Pokemons[0];
 		currentPokemon: string | undefined;
 	}
 
@@ -13,24 +13,13 @@
 		currentPokemon = Pokemon.name;
 		window.scrollTo(0, 0);
 	}
-
-	const sprites = Pokemon.pokemon_v2_pokemonsprites[0].sprites;
 </script>
 
-<div class={`type-${Pokemon.types[0].type.name}`}>
-	{#if typeof sprites != 'string'}
-		{#if sprites.versions?.['generation-v']['black-white'].animated?.front_default}
-			<img
-				src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/${sprites.versions?.['generation-v']['black-white'].animated?.front_default}`}
-				alt="image on {Pokemon.name}"
-			/>
-		{:else}
-			<img
-				src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/${sprites.front_default}`}
-				alt="image on {Pokemon.name}"
-			/>
-		{/if}
-	{/if}
+<div class={`type-${Pokemon.pokemontypes[0].type?.name}`}>
+	<img
+		src={Pokemon.pokemonsprites[0].sprites.front_default}
+		alt="image on {Pokemon.name}"
+	/>
 	<b>{Pokemon.name}</b>
 	<p>Pokedex entry {Pokemon.id}</p>
 	<button onclick={selectPokemon}>show</button>
