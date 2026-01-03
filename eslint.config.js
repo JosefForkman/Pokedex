@@ -3,12 +3,14 @@ import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
+import pluginQuery from "@tanstack/eslint-plugin-query";
 
 export default [
 	{ ignores: ['dist/'] },
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs['flat/recommended'],
+	...pluginQuery.configs['flat/recommended'],
 	prettier,
 	{
 		languageOptions: {
