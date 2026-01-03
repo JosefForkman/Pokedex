@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query';
-	import type { Pokemon } from '../types/pokemon';
-
-	type PokemonData = Pick<Pokemon, 'id' | 'name' | 'sprites' | 'types' | 'stats'>;
+	import request from 'graphql-request';
+	import { PokemonsState, type PokemonState } from './queries';
 
 	const statsIndex = {
 		Hp: 0,
@@ -13,7 +12,7 @@
 		Speed: 5
 	} as const;
 
-	let chosenPokemon: PokemonData | undefined = $state();
+	let chosenPokemon: PokemonState | null = $state(null);
 
 	interface Props {
 		pokemonName?: string;
@@ -21,27 +20,32 @@
 
 	let { pokemonName = 'umbreon' }: Props = $props();
 
-	let query = $derived(
+	const graphqlFetch = async () => {
+		const url = 'https://graphql.pokeapi.co/v1beta2';
+		const res = await request(url, PokemonsState, { name: pokemonName });
+
+		if (res.pokemon.length > 0) {
+			const data = res.pokemon[0];
+
+			chosenPokemon = data;
+		}
+		return res;
+	};
+
+	const query = $derived(
 		createQuery({
 			queryKey: ['singlePokemon', pokemonName],
-			queryFn: async (): Promise<PokemonData> => {
-				const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
-
-				const data: PokemonData = await response.json();
-
-				if (data) {
-					chosenPokemon = {
-						id: data.id,
-						name: data.name.charAt(0).toUpperCase() + data.name.slice(1),
-						sprites: data.sprites,
-						types: data.types,
-						stats: data.stats
-					};
-				}
-
-				return data;
-			}
+			queryFn: graphqlFetch
 		})
+	);
+
+	// Extract stats from chosenPokemon for easier access
+	const stats = $derived.by(
+		() =>
+			chosenPokemon?.pokemonstats.map((stat) => ({
+				name: stat.stat?.name,
+				base_stat: stat.base_stat
+			})) ?? []
 	);
 </script>
 
@@ -52,14 +56,15 @@
 {:else if $query.isSuccess}
 	<section class="pokemon-card">
 		<div class="pokemon-sprite">
-			{#if chosenPokemon?.sprites.versions?.['generation-v']['black-white'].animated?.front_default}
+			{#if chosenPokemon?.pokemonsprites.at(0)?.sprites.versions?.['generation-v']['black-white'].animated?.front_default}
 				<img
-					src={chosenPokemon.sprites.versions?.['generation-v']['black-white'].animated
-						?.front_default}
+					src={chosenPokemon.pokemonsprites.at(0)?.sprites.versions?.['generation-v'][
+						'black-white'
+					].animated?.front_default}
 					alt=""
 				/>
-			{:else if chosenPokemon?.sprites.front_default}
-				<img src={chosenPokemon.sprites.front_default} alt="" />
+			{:else if chosenPokemon?.pokemonsprites.at(0)?.sprites.front_default}
+				<img src={chosenPokemon.pokemonsprites.at(0)?.sprites.front_default} alt="" />
 			{/if}
 		</div>
 
@@ -71,23 +76,24 @@
 
 				<div class="type-wrapper">
 					<p>Types:</p>
-					{#each chosenPokemon?.types as type, i (i)}
+					{#each chosenPokemon?.pokemontypes as pokemonType, index (index)}
 						<p>
-							{type.type.name.charAt(0).toUpperCase() + type.type.name.slice(1)}
+							{pokemonType.type?.name}
 						</p>
 					{/each}
 				</div>
 			</div>
 
 			<div class="pokemon-sprite-shiny">
-				{#if chosenPokemon?.sprites.versions?.['generation-v']['black-white'].animated?.front_shiny}
+				{#if chosenPokemon?.pokemonsprites.at(0)?.sprites.versions?.['generation-v']['black-white'].animated?.front_shiny}
 					<img
-						src={chosenPokemon.sprites.versions?.['generation-v']['black-white']
-							.animated?.front_shiny}
+						src={chosenPokemon.pokemonsprites.at(0)?.sprites.versions?.['generation-v'][
+							'black-white'
+						].animated?.front_shiny}
 						alt=""
 					/>
-				{:else if chosenPokemon?.sprites.front_shiny}
-					<img src={chosenPokemon.sprites.front_shiny} alt="" />
+				{:else if chosenPokemon?.pokemonsprites.at(0)?.sprites.front_shiny}
+					<img src={chosenPokemon.pokemonsprites.at(0)?.sprites.front_shiny} alt="" />
 				{/if}
 			</div>
 		</div>
@@ -95,21 +101,21 @@
 		<div class="stats-wrapper">
 			<p>Base Stats</p>
 			<ul>
-				<li>Hp: {chosenPokemon?.stats[statsIndex.Hp].base_stat}</li>
+				<li>Hp: {stats[statsIndex.Hp]?.base_stat}</li>
 				<li>
-					Attack: {chosenPokemon?.stats[statsIndex.Attack].base_stat}
+					Attack: {stats[statsIndex.Attack]?.base_stat}
 				</li>
 				<li>
-					Defense: {chosenPokemon?.stats[statsIndex.Defense].base_stat}
+					Defense: {stats[statsIndex.Defense]?.base_stat}
 				</li>
 				<li>
-					Special attack: {chosenPokemon?.stats[statsIndex.SpecialAttack].base_stat}
+					Special attack: {stats[statsIndex.SpecialAttack]?.base_stat}
 				</li>
 				<li>
-					Special defense: {chosenPokemon?.stats[statsIndex.SpecialDefense].base_stat}
+					Special defense: {stats[statsIndex.SpecialDefense]?.base_stat}
 				</li>
 				<li>
-					Speed: {chosenPokemon?.stats[statsIndex.Speed].base_stat}
+					Speed: {stats[statsIndex.Speed]?.base_stat}
 				</li>
 			</ul>
 		</div>

@@ -1,70 +1,32 @@
 <script lang="ts">
-	import { request, gql } from 'graphql-request';
+	import { request } from 'graphql-request';
 	import { createQuery } from '@tanstack/svelte-query';
 	import Card from '../Card.svelte';
 	import PokemonCard from '../PokemonCard.svelte';
-	import type { PokemonType } from '../../types/PokemonGrid';
+	import { PokemonsQuery } from '../queries';
 
 	let currentPokemon: string | undefined = $state();
-	let pokemonVersion = $state('red');
+	let pokemonVersion = $state('gold');
 
-	const graphqlFetch = async (version = 'gold'): Promise<PokemonType> => {
-		const url = 'https://beta.pokeapi.co/graphql/v1beta';
-		const document = gql`
-			query {
-				pokemon_v2_pokemon(
-					limit: 200
-					where: {
-						pokemon_v2_encounters: {
-							pokemon_v2_version: { name: { _eq: ${version} } }
-						}
-					}
-				) {
-					name
-					id
-					pokemon_v2_pokemonsprites {
-						sprites
-					}
-					types: pokemon_v2_pokemontypes {
-						type: pokemon_v2_type {
-							name
-						}
-					}
-				}
-			}
-		`;
+	
 
-		let res = await request<PokemonType>(url, document);
 
-		res.pokemon_v2_pokemon.forEach((Pokemon) => {
-			let sprite = Pokemon.pokemon_v2_pokemonsprites[0].sprites;
+	const graphqlFetch = async (version = 'gold') => {
+		const url = 'https://graphql.pokeapi.co/v1beta2';
 
-			/* Check if sprite is not stringify JSON */
-			if (typeof sprite == 'string') {
-				/* Fix sprite url */
-				sprite = sprite.replaceAll('/media', '');
-
-				/* Parse sprit to JSON */
-				const parsedData = JSON.parse(sprite);
-
-				sprite = parsedData;
-			}
-
-			/* Update sprite object on respond */
-			Pokemon.pokemon_v2_pokemonsprites[0].sprites = sprite;
-		});
+		let res = await request(url, PokemonsQuery, { version });
 
 		return res;
 	};
 
 	let query = $derived(
-		createQuery<PokemonType, Error>({
+		createQuery({
 			queryKey: [pokemonVersion],
 			queryFn: () => graphqlFetch(pokemonVersion),
 			cacheTime: 100,
 			staleTime: 2000
 		})
-	);
+	);	
 </script>
 
 <PokemonCard pokemonName={currentPokemon} />
@@ -72,6 +34,7 @@
 <form>
 	<label for="selectPokemon">Filter select pokemon version</label>
 	<select id="selectPokemon" bind:value={pokemonVersion}>
+		<option value="gold">gold</option>
 		<option value="red">red</option>
 		<option value="blue">blue</option>
 		<option value="yellow">yellow</option>
@@ -89,7 +52,7 @@
 
 <section>
 	{#if $query.data}
-		{#each $query.data.pokemon_v2_pokemon as pokemonList, i (i)}
+		{#each $query.data.pokemon as pokemonList (pokemonList.id)}
 			<Card bind:currentPokemon Pokemon={pokemonList} />
 		{/each}
 	{/if}
