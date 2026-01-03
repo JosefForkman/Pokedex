@@ -1,4 +1,4 @@
-import { graphql, type ResultOf } from '../utls/graphql';
+import { graphql, type ResultOf } from "../utils/graphql";
 
 export const PokemonsQuery = graphql(`
 	query ($version: String!) {
