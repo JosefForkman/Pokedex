@@ -32,12 +32,10 @@
 		return res;
 	};
 
-	const query = $derived(
-		createQuery({
-			queryKey: ['singlePokemon', pokemonName],
-			queryFn: graphqlFetch
-		})
-	);
+	const query = createQuery(() => ({
+		queryKey: ['singlePokemon', pokemonName],
+		queryFn: graphqlFetch
+	}));
 
 	// Extract stats from chosenPokemon for easier access
 	const stats = $derived.by(
@@ -49,11 +47,11 @@
 	);
 </script>
 
-{#if $query.isLoading}
+{#if query.isLoading}
 	<div class="loading-block">
 		<p>Loading...</p>
 	</div>
-{:else if $query.isSuccess}
+{:else if query.isSuccess}
 	<section class="pokemon-card">
 		<div class="pokemon-sprite">
 			{#if chosenPokemon?.pokemonsprites.at(0)?.sprites.versions?.['generation-v']['black-white'].animated?.front_default}
