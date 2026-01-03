@@ -19,14 +19,12 @@
 		return res;
 	};
 
-	let query = $derived(
-		createQuery({
-			queryKey: [pokemonVersion],
-			queryFn: () => graphqlFetch(pokemonVersion),
-			cacheTime: 100,
-			staleTime: 2000
-		})
-	);	
+	const query = createQuery(() => ({
+		queryKey: [pokemonVersion],
+		queryFn: () => graphqlFetch(pokemonVersion),
+		staleTime: 2000
+	}));
+	
 </script>
 
 <PokemonCard pokemonName={currentPokemon} />
@@ -51,8 +49,8 @@
 </form>
 
 <section>
-	{#if $query.data}
-		{#each $query.data.pokemon as pokemonList (pokemonList.id)}
+	{#if query.data}
+		{#each query.data.pokemon as pokemonList (pokemonList.id)}
 			<Card bind:currentPokemon Pokemon={pokemonList} />
 		{/each}
 	{/if}
